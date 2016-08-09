@@ -32,15 +32,38 @@ namespace csMACnz.ConcurrentConsole
             {
                 var value = System.Console.ReadKey();
                 if ((value.Modifiers & ConsoleModifiers.Alt) != 0) { }
-                else if ((value.Modifiers & ConsoleModifiers.Shift) != 0) { }
                 else if ((value.Modifiers & ConsoleModifiers.Control) != 0) { }
-                if (value.Key == ConsoleKey.Enter)
+                else if(value.Key == ConsoleKey.Home){}
+                else if(value.Key == ConsoleKey.End){}
+                else if(value.Key == ConsoleKey.PageUp){}
+                else if(value.Key == ConsoleKey.PageDown){}
+                else if(value.Key == ConsoleKey.UpArrow){}
+                else if(value.Key == ConsoleKey.DownArrow){}
+                else if(value.Key == ConsoleKey.LeftArrow){}
+                else if(value.Key == ConsoleKey.RightArrow){}
+                #if net35 || net40 || net45
+                else if(value.Key == ConsoleKey.Applications){}
+                #endif
+                else if (value.Key == ConsoleKey.Enter)
                 {
                     break;
                 }
                 else if (value.Key == ConsoleKey.Escape)
                 {
                     _input = "";
+                }
+                else if (value.Key == ConsoleKey.Backspace)
+                {
+                    lock (_locker)
+                    {
+                        ClearTheLine();
+                    }
+                    _input = _input.Length >0?_input.Substring(0, _input.Length-1) :_input;
+                }
+                else if (value.Key == ConsoleKey.Tab)
+                {
+                    //TODO
+                    _input += value.KeyChar;
                 }
                 else
                 {
