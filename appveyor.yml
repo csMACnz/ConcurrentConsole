@@ -11,4 +11,4 @@ build_script:
 test_script:
 - ps: psake appveyor-test
 artifacts:
-- path: csMACnz.ConcurrentConsole.*.nupkg
+- path: pack\csMACnz.ConcurrentConsole.*.nupkg
