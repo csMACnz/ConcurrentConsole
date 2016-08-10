@@ -35,7 +35,6 @@ task GitVersion -depends SetChocolateyPath {
 }
 
 task restore {
-    cd project
     dotnet restore
 }
 
@@ -63,7 +62,7 @@ task sample {
     dotnet run -p $base_dir/src/csMACnz.ConcurrentConsole.Sample
 }
 
-task appveyor-install -depends GitVersion
+task appveyor-install -depends GitVersion, restore
 
 task appveyor-build -depends build
 
