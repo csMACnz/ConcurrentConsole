@@ -12,3 +12,17 @@ test_script:
 - ps: psake appveyor-test
 artifacts:
 - path: pack\csMACnz.ConcurrentConsole.*.nupkg
+deploy:
+- provider: GitHub
+  auth_token:
+    secure: hH6A9i7v+sf5mZy9FLQVG7n4UpLWkUhpshIsia7sGi1ONr+iMKroqjkJk0Hsi3nK
+  artifact: /.*\.nupkg/
+  on:
+    branch: master
+    APPVEYOR_REPO_TAG: true
+- provider: NuGet
+  api_key:
+    secure: 4XLKYHbHXYJuc9SCTYZt5VzxE/XDBpjWSttRIK3ZGux5TwIgAnhMBamo16fjVmzS
+  on:
+    branch: master
+    APPVEYOR_REPO_TAG: true
