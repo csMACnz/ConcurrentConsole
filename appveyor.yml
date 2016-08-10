@@ -1,0 +1,14 @@
+version: 0.0.{build}
+os: Windows Server 2012 R2
+cache:
+- C:\ProgramData\chocolatey\bin -> build.environment.ps1
+- C:\ProgramData\chocolatey\lib -> build.environment.ps1
+install:
+- ps: .\build.environment.ps1
+- ps: psake appveyor-install
+build_script:
+- ps: psake appveyor-build
+test_script:
+- ps: psake appveyor-test
+artifacts:
+- path: csMACnz.ConcurrentConsole.*.nupkg
