@@ -15,16 +15,20 @@ namespace csMACnz.ConcurrentConsole
             {
                 if (value != _prompt)
                 {
-                    ClearTheLine();
-                    _prompt = value;
-                    ClearTheLine();
+                    lock (_locker)
+                    {
+                        ClearTheLine();
+                        
+                        _prompt = value;
 
-                    ResetReadHead();
+                        ReprintReadHead();
+                    }
                 }
             }
         }
         private object _locker = new object();
         private string _input = null;
+        private int _currentInputLength = 0;
         public string ReadLine()
         {
             _input = "";
@@ -33,17 +37,17 @@ namespace csMACnz.ConcurrentConsole
                 var value = System.Console.ReadKey();
                 if ((value.Modifiers & ConsoleModifiers.Alt) != 0) { }
                 else if ((value.Modifiers & ConsoleModifiers.Control) != 0) { }
-                else if(value.Key == ConsoleKey.Home){}
-                else if(value.Key == ConsoleKey.End){}
-                else if(value.Key == ConsoleKey.PageUp){}
-                else if(value.Key == ConsoleKey.PageDown){}
-                else if(value.Key == ConsoleKey.UpArrow){}
-                else if(value.Key == ConsoleKey.DownArrow){}
-                else if(value.Key == ConsoleKey.LeftArrow){}
-                else if(value.Key == ConsoleKey.RightArrow){}
-                #if net35 || net40 || net45
-                else if(value.Key == ConsoleKey.Applications){}
-                #endif
+                else if (value.Key == ConsoleKey.Home) { }
+                else if (value.Key == ConsoleKey.End) { }
+                else if (value.Key == ConsoleKey.PageUp) { }
+                else if (value.Key == ConsoleKey.PageDown) { }
+                else if (value.Key == ConsoleKey.UpArrow) { }
+                else if (value.Key == ConsoleKey.DownArrow) { }
+                else if (value.Key == ConsoleKey.LeftArrow) { }
+                else if (value.Key == ConsoleKey.RightArrow) { }
+#if net35 || net40 || net45
+                else if (value.Key == ConsoleKey.Applications) { }
+#endif
                 else if (value.Key == ConsoleKey.Enter)
                 {
                     break;
@@ -54,11 +58,7 @@ namespace csMACnz.ConcurrentConsole
                 }
                 else if (value.Key == ConsoleKey.Backspace)
                 {
-                    lock (_locker)
-                    {
-                        ClearTheLine();
-                    }
-                    _input = _input.Length >0?_input.Substring(0, _input.Length-1) :_input;
+                    _input = _input.Length > 0 ? _input.Substring(0, _input.Length - 1) : _input;
                 }
                 else if (value.Key == ConsoleKey.Tab)
                 {
@@ -73,14 +73,21 @@ namespace csMACnz.ConcurrentConsole
                 {
                     ClearTheLine();
 
-                    ResetReadHead();
+                    ReprintReadHead();
                 }
             }
             var result = _input;
 
-            WriteLine(result);
+            lock (_locker)
+            {
+                ClearTheLine();
 
-            _input = null;
+                _input = null;
+
+                System.Console.WriteLine(result);
+
+                ReprintReadHead();
+            }
             return result;
         }
 
@@ -92,32 +99,34 @@ namespace csMACnz.ConcurrentConsole
 
                 System.Console.WriteLine(value);
 
-                ResetReadHead();
+                ReprintReadHead();
             }
         }
 
-        private void ResetReadHead()
+        private void ReprintReadHead()
         {
+            _currentInputLength = 0;
             if (Prompt != null)
             {
                 System.Console.Write(Prompt);
+                _currentInputLength += Prompt.Length;
             }
             if (!string.IsNullOrEmpty(_input))
             {
                 System.Console.Write(_input);
+                _currentInputLength += _input.Length;
             }
         }
 
         private void ClearTheLine()
         {
-            var maxClear = Math.Max(System.Console.CursorLeft, (_input?.Length ?? 0) + (Prompt?.Length ?? 0));
-            if (maxClear > 0)
+            if (_currentInputLength > 0)
             {
-                var message = new string(' ', maxClear);
+                var whitepspace = new string(' ', _currentInputLength);
 
                 System.Console.SetCursorPosition(0, System.Console.CursorTop);
 
-                System.Console.Write(message);
+                System.Console.Write(whitepspace);
             }
 
             System.Console.SetCursorPosition(0, System.Console.CursorTop);
