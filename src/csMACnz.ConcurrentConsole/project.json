@@ -1,9 +1,30 @@
 {
+  "title": "ConcurrentConsole",
   "name": "csMACnz.ConcurrentConsole",
+  "authors": [
+      "csMACnz"
+  ],
   "version": "1.0.0-*",
+  "description": "This library allows your application to interact with the console across multiple threads. You can write output even while reading in user input, without loosing any keystrokes.",
   "buildOptions": {
     "debugType": "portable",
 	"warningsAsErrors": true
+  },
+  "packOptions": {
+      "summary": "Multithreaded input and output at the command prompt.",
+      "owners": [
+          "csMACnz"
+      ],
+      "repository": {
+          "type": "git",
+          "url": "https://github.com/csMACnz/ConcurrentConsole"
+      },
+      "tags": [
+          "System.Console",
+          "Console"
+      ],
+      "iconUrl": "http://img.csmac.nz/ConcurrentConsole-32-icon.png",
+      "requireLicenseAcceptance": false
   },
   "dependencies": {},
   "frameworks": {
