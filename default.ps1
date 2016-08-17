@@ -62,6 +62,14 @@ task sample {
     dotnet run -p $base_dir/src/csMACnz.ConcurrentConsole.Sample
 }
 
+task sample-net45 {
+    dotnet run -p $base_dir/src/csMACnz.ConcurrentConsole.Sample -f net45
+}
+
+task simple-sample {
+    dotnet run -p $base_dir/src/csMACnz.ConcurrentConsole.Sample simple
+}
+
 task appveyor-install -depends GitVersion, restore
 
 task appveyor-build -depends build

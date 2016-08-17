@@ -20,6 +20,10 @@
         }
       },
       "imports": "dnxcore50"
+    },
+    "net45": {
+      "dependencies": {
+      }
     }
   }
 }

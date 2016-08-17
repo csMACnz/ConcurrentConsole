@@ -1,9 +1,20 @@
 ﻿using System;
+using System.Text;
 
 namespace csMACnz.ConcurrentConsole
 {
+    //TODO: docs comments
     public class Console
     {
+        public Console()
+        {
+            OutputEncoding = System.Text.Encoding.Unicode;
+            InputEncoding = System.Text.Encoding.Unicode;
+            TabSize = 4;
+        }
+
+        public int TabSize { get; set; }
+
         private string _prompt;
         public string Prompt
         {
@@ -18,7 +29,7 @@ namespace csMACnz.ConcurrentConsole
                     lock (_locker)
                     {
                         ClearTheLine();
-                        
+
                         _prompt = value;
 
                         ReprintReadHead();
@@ -26,6 +37,33 @@ namespace csMACnz.ConcurrentConsole
                 }
             }
         }
+
+        public string InputPrefix { get; set; }
+
+        public Encoding InputEncoding
+        {
+            get
+            {
+                return System.Console.InputEncoding;
+            }
+            set
+            {
+                System.Console.InputEncoding = value;
+            }
+        }
+
+        public Encoding OutputEncoding
+        {
+            get
+            {
+                return System.Console.OutputEncoding;
+            }
+            set
+            {
+                System.Console.OutputEncoding = value;
+            }
+        }
+
         private object _locker = new object();
         private string _input = null;
         private int _currentInputLength = 0;
@@ -43,7 +81,7 @@ namespace csMACnz.ConcurrentConsole
                 else if (value.Key == ConsoleKey.PageDown) { }
                 else if (value.Key == ConsoleKey.UpArrow) { }
                 else if (value.Key == ConsoleKey.DownArrow) { }
-                else if (value.Key == ConsoleKey.LeftArrow) { }
+                else if (value.Key == ConsoleKey.LeftArrow) { }//TODO: cursor offset
                 else if (value.Key == ConsoleKey.RightArrow) { }
 #if net35 || net40 || net45
                 else if (value.Key == ConsoleKey.Applications) { }
@@ -62,8 +100,10 @@ namespace csMACnz.ConcurrentConsole
                 }
                 else if (value.Key == ConsoleKey.Tab)
                 {
-                    //TODO
-                    _input += value.KeyChar;
+                    var remainder = _input.Length % TabSize;
+                    var spaceCount = TabSize - remainder;
+                    //Tabs cause trouble with delete, so just use spaces
+                    _input += new string(' ', spaceCount);
                 }
                 else
                 {
@@ -84,7 +124,7 @@ namespace csMACnz.ConcurrentConsole
 
                 _input = null;
 
-                System.Console.WriteLine(result);
+                System.Console.WriteLine($"{InputPrefix}{result}");
 
                 ReprintReadHead();
             }
@@ -122,11 +162,11 @@ namespace csMACnz.ConcurrentConsole
         {
             if (_currentInputLength > 0)
             {
-                var whitepspace = new string(' ', _currentInputLength);
+                var whitespace = new string(' ', _currentInputLength);
 
                 System.Console.SetCursorPosition(0, System.Console.CursorTop);
 
-                System.Console.Write(whitepspace);
+                System.Console.Write(whitespace);
             }
 
             System.Console.SetCursorPosition(0, System.Console.CursorTop);
