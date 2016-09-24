@@ -14,7 +14,7 @@ namespace ConsoleApplication
                 simple = true;
             }
             var rand = new Random();
-            var console = new csMACnz.ConcurrentConsole.Console();
+            var console = csMACnz.ConcurrentConsole.Console.Instance;
             console.Prompt = ">";
             console.InputPrefix = ">";
             

@@ -4,16 +4,50 @@ using System.Text;
 namespace csMACnz.ConcurrentConsole
 {
     //TODO: docs comments
-    public class Console
+    public class Console : IConsole
     {
-        public Console()
+#if net35
+        private static Console _instance;
+#else
+    private static Lazy<Console> _instance = new Lazy<Console>(()=> new Console());
+#endif
+
+        public static IConsole Instance
+        {
+            get
+            {
+#if net35
+                if (_instance == null)
+                {
+                    _instance = new Console();
+                }
+                return _instance;
+#else
+            return _instance.Value;
+#endif
+            }
+        }
+
+        private Console()
         {
             OutputEncoding = System.Text.Encoding.Unicode;
             InputEncoding = System.Text.Encoding.Unicode;
             TabSize = 4;
         }
 
-        public int TabSize { get; set; }
+        private int _tabSize;
+        public int TabSize
+        {
+            get
+            {
+                return _tabSize;
+            }
+            set
+            {
+                if (value < 0) throw new ArgumentOutOfRangeException(nameof(value), "TabSize cannot be negative.");
+                _tabSize = value;
+            }
+        }
 
         private string _prompt;
         public string Prompt
@@ -171,5 +205,17 @@ namespace csMACnz.ConcurrentConsole
 
             System.Console.SetCursorPosition(0, System.Console.CursorTop);
         }
+    }
+
+    public interface IConsole
+    {
+        //TODO: more matching overrides from System.Console
+        string ReadLine();
+        void WriteLine(string value);
+        int TabSize { get; set; }
+        string Prompt { get; set; }
+        string InputPrefix { get; set; }
+        Encoding InputEncoding { get; set; }
+        Encoding OutputEncoding { get; set; }
     }
 }
