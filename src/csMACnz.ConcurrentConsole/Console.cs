@@ -165,13 +165,61 @@ namespace csMACnz.ConcurrentConsole
             return result;
         }
 
+        public void WriteLine()
+        {
+            LockForLineWrites(() =>
+            {
+                System.Console.WriteLine();
+            });
+        }
+
+        public void WriteLine(char[] buffer)
+        {
+            LockForLineWrites(() =>
+            {
+                System.Console.WriteLine(buffer);
+            });
+        }
+
+        public void WriteLine(char[] buffer, int index, int count)
+        {
+            LockForLineWrites(() =>
+            {
+                System.Console.WriteLine(buffer, index, count);
+            });
+        }
+
+        public void WriteLine(object value)
+        {
+            LockForLineWrites(() =>
+            {
+                System.Console.WriteLine(value);
+            });
+        }
+
         public void WriteLine(string value)
+        {
+            LockForLineWrites(() =>
+            {
+                System.Console.WriteLine(value);
+            });
+        }
+
+        public void WriteLine(string format, params object[] arg)
+        {
+            LockForLineWrites(() =>
+            {
+                System.Console.WriteLine(format, arg);
+            });
+        }
+
+        private void LockForLineWrites(Action action)
         {
             lock (_locker)
             {
                 ClearTheLine();
 
-                System.Console.WriteLine(value);
+                action();
 
                 ReprintReadHead();
             }
@@ -205,17 +253,5 @@ namespace csMACnz.ConcurrentConsole
 
             System.Console.SetCursorPosition(0, System.Console.CursorTop);
         }
-    }
-
-    public interface IConsole
-    {
-        //TODO: more matching overrides from System.Console
-        string ReadLine();
-        void WriteLine(string value);
-        int TabSize { get; set; }
-        string Prompt { get; set; }
-        string InputPrefix { get; set; }
-        Encoding InputEncoding { get; set; }
-        Encoding OutputEncoding { get; set; }
     }
 }

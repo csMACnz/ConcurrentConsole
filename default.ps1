@@ -28,9 +28,8 @@ task GitVersion -depends SetChocolateyPath {
     echo "nuget version set to $nugetVersion"
     
     Get-ChildItem -r project.json | % {
-        $json = Get-Content -Raw -Path $_.FullName | ConvertFrom-Json
-        $json.Version = $nugetVersion
-        ($json) | ConvertTo-Json -depth 999 -Compress | Set-Content $_.FullName 
+        cd $_.Directory
+        dotnet version $nugetVersion 
     }
 }
 
@@ -56,6 +55,11 @@ task pack {
     mkdir $package_dir
 
     dotnet pack $base_dir/src/csMACnz.ConcurrentConsole -c $Configuration -o $package_dir
+}
+
+task watch-build {
+    cd $base_dir/src/csMACnz.ConcurrentConsole.Sample
+    dotnet watch build
 }
 
 task sample {

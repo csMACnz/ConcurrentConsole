@@ -2,52 +2,56 @@
   "title": "ConcurrentConsole",
   "name": "csMACnz.ConcurrentConsole",
   "authors": [
-      "csMACnz"
+    "csMACnz"
   ],
   "version": "1.0.0-*",
   "description": "This library allows your application to interact with the console across multiple threads. You can write output even while reading in user input, without loosing any keystrokes.",
   "buildOptions": {
     "debugType": "portable",
-	"warningsAsErrors": true
+    "warningsAsErrors": true
   },
   "packOptions": {
-      "summary": "Multithreaded input and output at the command prompt.",
-      "owners": [
-          "csMACnz"
-      ],
-      "repository": {
-          "type": "git",
-          "url": "https://github.com/csMACnz/ConcurrentConsole"
-      },
-      "tags": [
-          "System.Console",
-          "Console"
-      ],
-      "iconUrl": "http://img.csmac.nz/ConcurrentConsole-32-icon.png",
-      "requireLicenseAcceptance": false
+    "summary": "Multithreaded input and output at the command prompt.",
+    "owners": [
+      "csMACnz"
+    ],
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/csMACnz/ConcurrentConsole"
+    },
+    "tags": [
+      "System.Console",
+      "Console"
+    ],
+    "iconUrl": "http://img.csmac.nz/ConcurrentConsole-32-icon.png",
+    "requireLicenseAcceptance": false
+  },
+  "tools": {
+    "Microsoft.DotNet.Watcher.Tools": "1.0.0-preview2-final",
+    "dotnet-version": "1.2.0"
   },
   "dependencies": {},
   "frameworks": {
-    "net35" : {
-        "buildOptions": {
-            "define": [
-                "net35"
-            ]
-        }
+    "net35": {
+      "buildOptions": {
+        "define": [
+          "net35"
+        ]
+      }
     },
-    "net40" : {
-        "buildOptions": {
-            "define": [
-                "net40"
-            ]
-        }
+    "net40": {
+      "buildOptions": {
+        "define": [
+          "net40"
+        ]
+      }
     },
-    "net45" : {
-        "buildOptions": {
-            "define": [
-                "net45"
-            ]
-        }
+    "net45": {
+      "buildOptions": {
+        "define": [
+          "net45"
+        ]
+      }
     },
     "netstandard1.3": {
       "dependencies": {
