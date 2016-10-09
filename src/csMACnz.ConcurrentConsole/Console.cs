@@ -9,7 +9,7 @@ namespace csMACnz.ConcurrentConsole
 #if net35
         private static Console _instance;
 #else
-    private static Lazy<Console> _instance = new Lazy<Console>(()=> new Console());
+    private static Lazy<Console> _instance = new Lazy<Console>(()=> new Console(new ConsoleFacade()));
 #endif
 
         public static IConsole Instance
@@ -19,7 +19,7 @@ namespace csMACnz.ConcurrentConsole
 #if net35
                 if (_instance == null)
                 {
-                    _instance = new Console();
+                    _instance = new Console(new ConsoleFacade());
                 }
                 return _instance;
 #else
@@ -28,11 +28,20 @@ namespace csMACnz.ConcurrentConsole
             }
         }
 
-        private Console()
+        private IConsoleFacade _actualConsole;
+
+        private Console(IConsoleFacade actualConsole)
         {
+            _actualConsole = actualConsole;
             OutputEncoding = System.Text.Encoding.Unicode;
             InputEncoding = System.Text.Encoding.Unicode;
             TabSize = 4;
+        }
+
+        public static Console CreateForTesting(IConsoleFacade testFacade)
+        {
+            System.Console.WriteLine("Creating a Console for testing");
+            return new Console(testFacade);
         }
 
         private int _tabSize;
@@ -78,11 +87,11 @@ namespace csMACnz.ConcurrentConsole
         {
             get
             {
-                return System.Console.InputEncoding;
+                return _actualConsole.InputEncoding;
             }
             set
             {
-                System.Console.InputEncoding = value;
+                _actualConsole.InputEncoding = value;
             }
         }
 
@@ -90,11 +99,11 @@ namespace csMACnz.ConcurrentConsole
         {
             get
             {
-                return System.Console.OutputEncoding;
+                return _actualConsole.OutputEncoding;
             }
             set
             {
-                System.Console.OutputEncoding = value;
+                _actualConsole.OutputEncoding = value;
             }
         }
 
@@ -106,7 +115,7 @@ namespace csMACnz.ConcurrentConsole
             _input = "";
             while (true)
             {
-                var value = System.Console.ReadKey();
+                var value = _actualConsole.ReadKey();
                 if ((value.Modifiers & ConsoleModifiers.Alt) != 0) { }
                 else if ((value.Modifiers & ConsoleModifiers.Control) != 0) { }
                 else if (value.Key == ConsoleKey.Home) { }
@@ -158,7 +167,7 @@ namespace csMACnz.ConcurrentConsole
 
                 _input = null;
 
-                System.Console.WriteLine($"{InputPrefix}{result}");
+                _actualConsole.WriteLine($"{InputPrefix}{result}");
 
                 ReprintReadHead();
             }
@@ -169,7 +178,7 @@ namespace csMACnz.ConcurrentConsole
         {
             LockForLineWrites(() =>
             {
-                System.Console.WriteLine();
+                _actualConsole.WriteLine();
             });
         }
 
@@ -177,7 +186,7 @@ namespace csMACnz.ConcurrentConsole
         {
             LockForLineWrites(() =>
             {
-                System.Console.WriteLine(buffer);
+                _actualConsole.WriteLine(buffer);
             });
         }
 
@@ -185,7 +194,7 @@ namespace csMACnz.ConcurrentConsole
         {
             LockForLineWrites(() =>
             {
-                System.Console.WriteLine(buffer, index, count);
+                _actualConsole.WriteLine(buffer, index, count);
             });
         }
 
@@ -193,7 +202,7 @@ namespace csMACnz.ConcurrentConsole
         {
             LockForLineWrites(() =>
             {
-                System.Console.WriteLine(value);
+                _actualConsole.WriteLine(value);
             });
         }
 
@@ -201,7 +210,7 @@ namespace csMACnz.ConcurrentConsole
         {
             LockForLineWrites(() =>
             {
-                System.Console.WriteLine(value);
+                _actualConsole.WriteLine(value);
             });
         }
 
@@ -209,7 +218,7 @@ namespace csMACnz.ConcurrentConsole
         {
             LockForLineWrites(() =>
             {
-                System.Console.WriteLine(format, arg);
+                _actualConsole.WriteLine(format, arg);
             });
         }
 
@@ -230,12 +239,12 @@ namespace csMACnz.ConcurrentConsole
             _currentInputLength = 0;
             if (Prompt != null)
             {
-                System.Console.Write(Prompt);
+                _actualConsole.Write(Prompt);
                 _currentInputLength += Prompt.Length;
             }
             if (!string.IsNullOrEmpty(_input))
             {
-                System.Console.Write(_input);
+                _actualConsole.Write(_input);
                 _currentInputLength += _input.Length;
             }
         }
@@ -246,12 +255,12 @@ namespace csMACnz.ConcurrentConsole
             {
                 var whitespace = new string(' ', _currentInputLength);
 
-                System.Console.SetCursorPosition(0, System.Console.CursorTop);
+                _actualConsole.SetCursorPosition(0, _actualConsole.CursorTop);
 
-                System.Console.Write(whitespace);
+                _actualConsole.Write(whitespace);
             }
 
-            System.Console.SetCursorPosition(0, System.Console.CursorTop);
+            _actualConsole.SetCursorPosition(0, _actualConsole.CursorTop);
         }
     }
 }
