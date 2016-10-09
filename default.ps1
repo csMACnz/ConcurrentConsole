@@ -42,9 +42,7 @@ task build {
 }
 
 task test {
-    #TODO
-    #cd src/csMACnz.ConcurrentConsole.Tests
-    #dotnet test
+    dotnet test tests/csMACnz.ConcurrentConsole.Tests
 }
 
 task pack {
@@ -60,6 +58,11 @@ task pack {
 task watch-build {
     cd $base_dir/src/csMACnz.ConcurrentConsole.Sample
     dotnet watch build
+}
+
+task watch-test {
+    cd $base_dir/tests/csMACnz.ConcurrentConsole.Tests
+    dotnet watch test
 }
 
 task sample {
